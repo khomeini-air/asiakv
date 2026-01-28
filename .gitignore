@@ -2,14 +2,12 @@
 .gradle/
 build/
 out/
-!gradle/wrapper/gradle-wrapper.jar
 
 # IntelliJ IDEA
 .idea/
 *.iml
 *.ipr
 *.iws
-out/
 
 # Eclipse
 .project
@@ -42,11 +40,6 @@ ehthumbs.db
 *.db
 *.lock
 
-# Gradle wrapper
-.gradle/
-gradle-wrapper.jar
-gradle-wrapper.properties
-
 # Local configuration
 local.properties
 
@@ -56,3 +49,7 @@ local.properties
 
 # Coverage reports
 /build/reports/
+
+# Keep Gradle Wrapper
+!gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
