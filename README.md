@@ -1,9 +1,6 @@
-# Versioned Key-Value Store (AsiaKV)
-
 # AsiaKV – Versioned Key-Value Store
 
-![CI](https://github.com/khomeini-air/asiakv/actions/workflows/main.yml/badge.svg)
-(https://github.com/khomeini-air/asiakv/actions/workflows/main.yml)
+[![CI](https://github.com/khomeini-air/asiakv/actions/workflows/main.yml/badge.svg)](https://github.com/khomeini-air/asiakv/actions/workflows/main.yml)
 ![Java](https://img.shields.io/badge/Java-17-blue)
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen)
 
