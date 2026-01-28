@@ -1,0 +1,58 @@
+# Gradle files
+.gradle/
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# VS Code
+.vscode/
+
+# Log files
+*.log
+
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+ehthumbs.db
+
+# OS-specific files
+*.swp
+*~
+
+# Java specific
+*.class
+*.jar
+*.war
+*.ear
+*.db
+*.lock
+
+# Gradle wrapper
+.gradle/
+gradle-wrapper.jar
+gradle-wrapper.properties
+
+# Local configuration
+local.properties
+
+# Temporary files
+*.tmp
+*.temp
+
+# Coverage reports
+/build/reports/

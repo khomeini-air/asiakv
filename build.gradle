@@ -1,0 +1,95 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.6'
+	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+}
+
+group = 'com.asia.asiakv'
+version = '0.0.1-SNAPSHOT'
+description = 'Asia KV'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+bootJar {
+	archiveFileName = 'asiakv.jar'
+	launchScript()
+}
+
+// Disable plain JAR
+jar {
+	enabled = false
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+dependencies {
+	// SpringBoot
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation "org.springframework.boot:spring-boot-starter-actuator"
+	implementation 'org.springframework.boot:spring-boot-starter-tomcat'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// OpenAPI - Swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.0'
+
+	// Micrometer - Prometheus for observability
+	implementation("io.micrometer:micrometer-registry-prometheus")
+
+	// mapstruct
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	// lombok
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+    // postgresql
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// tests
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testImplementation "org.testcontainers:postgresql"
+	testImplementation "org.testcontainers:junit-jupiter"
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+jacocoTestReport {
+	dependsOn test
+	reports {
+		html.required = true
+		xml.required = true
+	}
+	doLast {
+		println "JaCoCo HTML report location: file://${reports.html.outputLocation.get().asFile}/index.html"
+	}
+}
+
+test {
+	finalizedBy jacocoTestReport
+}
