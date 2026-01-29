@@ -15,7 +15,7 @@ public class SingleEntryMapValidator implements ConstraintValidator<SingleEntryM
     @Override
     public boolean isValid(Map<?, ?> value, ConstraintValidatorContext context) {
 
-        // Null is valid
+        // Not validating the presence which will be done by @NotNull.
         if (value == null) {
             return true;
         }

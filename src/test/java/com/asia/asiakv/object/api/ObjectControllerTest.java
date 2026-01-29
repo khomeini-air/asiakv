@@ -3,6 +3,7 @@ package com.asia.asiakv.object.api;
 import com.asia.asiakv.object.dto.KeyValueDto;
 import com.asia.asiakv.object.service.KeyValueService;
 import com.asia.asiakv.shared.dto.PaginationDTO;
+import com.asia.asiakv.shared.dto.Result;
 import com.asia.asiakv.shared.exception.ResourceNotFoundException;
 import com.asia.asiakv.shared.mapper.PaginationMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -71,7 +72,7 @@ class ObjectControllerTest {
                                     }
                                 """))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.code").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.code").value(Result.SUCCESS.getCode()))
                 .andExpect(jsonPath("$.data.key").value("mykey"))
                 .andExpect(jsonPath("$.data.value.country").value("Singapore"))
                 .andExpect(jsonPath("$.data.version").value(1));
@@ -82,7 +83,17 @@ class ObjectControllerTest {
         mockMvc.perform(post("/objects")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{}"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
+    }
+
+    @Test
+    void createOrUpdate_shouldReturn400_whenNullMap() throws Exception {
+        mockMvc.perform(post("/objects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
     }
 
     @Test
@@ -92,7 +103,41 @@ class ObjectControllerTest {
                         .content("""
                 { "k1": "v1", "k2": "v2" }
             """))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
+    }
+
+    @Test
+    void createOrUpdate_shouldReturn400_whenValueNull() throws Exception {
+        mockMvc.perform(post("/objects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                    { "k1": null }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
+    }
+
+    @Test
+    void createOrUpdate_shouldReturn400_whenValueEmpty() throws Exception {
+        mockMvc.perform(post("/objects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                    { "k1": {}  }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
+    }
+
+    @Test
+    void createOrUpdate_shouldReturn400_whenValueArray() throws Exception {
+        mockMvc.perform(post("/objects")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                    { "k1": [1, 2]  }
+                                """))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
     }
 
     @Test
@@ -108,7 +153,7 @@ class ObjectControllerTest {
 
         mockMvc.perform(get("/objects/mykey"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.code").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.code").value(Result.SUCCESS.getCode()))
                 .andExpect(jsonPath("$.data.key").value("mykey"))
                 .andExpect(jsonPath("$.data.version").value(2))
                 .andExpect(jsonPath("$.data.value.v").value("value2"));
@@ -130,7 +175,7 @@ class ObjectControllerTest {
         mockMvc.perform(get("/objects/mykey")
                         .param("timestamp", String.valueOf(ts)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.code").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.code").value(Result.SUCCESS.getCode()))
                 .andExpect(jsonPath("$.data.key").value("mykey"))
                 .andExpect(jsonPath("$.data.version").value(1))
                 .andExpect(jsonPath("$.data.value.v").value("value1"));
@@ -140,7 +185,8 @@ class ObjectControllerTest {
     void getByKey_shouldReturn400_whenTimestampNegative() throws Exception {
         mockMvc.perform(get("/objects/mykey")
                         .param("timestamp", "-1"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
     }
 
     @Test
@@ -149,7 +195,8 @@ class ObjectControllerTest {
                 .thenThrow(new ResourceNotFoundException("Key missing not found"));
 
         mockMvc.perform(get("/objects/missing"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.result.code").value(Result.RESOURCE_NOT_FOUND.getCode()));
     }
 
     @Test
@@ -169,13 +216,40 @@ class ObjectControllerTest {
         when(paginationMapper.toDTO(page))
                 .thenReturn(paginationDTO);
 
+        // sorting default - ascending
         mockMvc.perform(get("/objects")
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.code").value("SUCCESS"))
+                .andExpect(jsonPath("$.result.code").value(Result.SUCCESS.getCode()))
                 .andExpect(jsonPath("$.data[0].key").value("k"))
                 .andExpect(jsonPath("$.data[0].value.v").value("v"))
                 .andExpect(jsonPath("$.pagination.totalElements").value(1));
+
+        // sorting descending
+        mockMvc.perform(get("/objects")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sortDirection", "DESCENDING"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.result.code").value(Result.SUCCESS.getCode()))
+                .andExpect(jsonPath("$.data[0].key").value("k"))
+                .andExpect(jsonPath("$.data[0].value.v").value("v"))
+                .andExpect(jsonPath("$.pagination.totalElements").value(1));
+    }
+
+    @Test
+    void getAll_shouldReturn400_when() throws Exception {
+        mockMvc.perform(get("/objects")
+                        .param("size", "-10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.result.code").value(Result.PARAM_ILLEGAL.getCode()));
+    }
+
+    @Test
+    void createOrUpdate_shouldReturn500_whenThrowException() throws Exception {
+        mockMvc.perform(get("/test/error"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.result.code").value(Result.INTERNAL_ERROR.getCode()));
     }
 }
