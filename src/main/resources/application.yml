@@ -21,8 +21,25 @@ spring:
 
 # Spring Doc
 springdoc:
-  packages-to-scan : com.asia.asiakv
+  packages-to-scan: com.asia.asiakv
   paths-to-match: /**
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operationsSorter: alpha
+  openapi:
+    info:
+      title: Asia Key Value Management API
+      version: "1.0"
+      description: API documentation for Asia Key Value Application
+      contact:
+        name: Khomeini
+        email: khomeini.air@aol.com
+      license:
+        name: Apache 2.0
+        url: https://www.apache.org/licenses/LICENSE-2.0
 
 # Actuator
 management:
