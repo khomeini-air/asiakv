@@ -11,9 +11,9 @@ AsiaKV is a **version-controlled key-value store** that supports concurrent upda
 
 ## Features
 
-* Versioned key - json blob value storage.
-* Strict version incrementing (`+1`) per update.
-* Safe handling of high concurrency, e.g. 50 concurrent writes.
+* Accept a key (String) and value (JSON/string) and store them or update if exists.
+* The key and value are versioned with strict version incrementing (`+1`) per update.
+* Safe handling of high concurrency. If the system accepts 50 concurrent requests within 30 seconds to update the key-value will end up with versions 1 through 51 clearly defined.
 * Time-travel queries (read value at a given timestamp).
 * Pagination for listing latest values.
 * Database-backed consistency using row-level locking
@@ -36,6 +36,7 @@ The system is implemented using **Spring Boot + Spring Data JPA** with a relatio
 * JUnit
 * Mockito
 * JaCoCo
+* Docker
 * CI/CD with Github Actions.
 
 ### Component Structure
